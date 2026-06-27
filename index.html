@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SBZ Dream Weddings & Décor</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght=500;700&family=Poppins:wght=300;500;600&display=swap" rel="stylesheet">
 
 <style>
 
@@ -198,7 +198,7 @@ section:nth-of-type(even) .card {
     margin: 8px 0;
 }
 
-/* GALLERY */
+/* GALLERY WITH EDIT BUTTONS */
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
@@ -208,12 +208,87 @@ section:nth-of-type(even) .card {
     margin: 0 auto;
 }
 
-.gallery img {
-    width: 100%;
+.gallery-item {
+    position: relative;
     height: 250px;
-    object-fit: cover;
     border-radius: 10px;
+    overflow: hidden;
     border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.delete-btn {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 0, 0, 0.85);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.8rem;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.3s;
+}
+
+.delete-btn:hover {
+    background: red;
+}
+
+/* ADMIN PANEL STYLING */
+.admin-panel {
+    display: none;
+    max-width: 600px;
+    margin: 20px auto 40px auto;
+    background: #151515;
+    padding: 20px;
+    border: 2px dashed gold;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.admin-panel h3 {
+    color: gold;
+    margin-top: 0;
+}
+
+.admin-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.admin-input-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.admin-input-group label {
+    font-size: 0.85rem;
+    color: #ccc;
+    margin-bottom: 5px;
+}
+
+.admin-panel input[type="file"],
+.admin-panel input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    background: #000;
+    border: 1px solid gold;
+    color: white;
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
 /* REQUEST QUOTE FORM */
@@ -390,11 +465,33 @@ footer {
 <section id="gallery">
     <h2>Our Work Gallery</h2>
     <div class="section-subtitle">Glimpses of Captivating Ambiances and Elite Setups</div>
-    <div class="gallery">
-        <img src="https://images.unsplash.com/photo-1519741497674-611481863552" alt="Wedding Setup 1">
-        <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf" alt="Wedding Setup 2">
-        <img src="https://images.unsplash.com/photo-1505238680356-667803448bb6" alt="Wedding Setup 3">
-        <img src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a" alt="Wedding Setup 4">
+    
+    <!-- EASY ACCESS BUTTON FOR WEBSITE OWNER -->
+    <button onclick="toggleAdminMode()" class="btn" style="margin-bottom: 30px; background: transparent; color: gold; border: 1px solid gold;">
+        🛠️ Toggle Edit Mode (Upload / Delete Photos)
+    </button>
+    
+    <!-- ADMIN CONSOLE -->
+    <div id="adminPanel" class="admin-panel">
+        <h3>Gallery Control Panel</h3>
+        <div class="admin-controls">
+            <div class="admin-input-group">
+                <label>Option 1: Upload an image file from your device</label>
+                <input type="file" id="imageUpload" accept="image/*">
+            </div>
+            <p style="margin: 5px 0; color: gold;">— OR —</p>
+            <div class="admin-input-group">
+                <label>Option 2: Paste an Image Web Link URL</label>
+                <input type="text" id="imageUrlInput" placeholder="https://example.com/image.jpg">
+            </div>
+            <button id="addImgBtn" class="btn" style="margin-top: 10px; width: 100%;">Add Photo to Gallery</button>
+            <button id="exportCodeBtn" class="btn" style="background: #222; color: gold; border: 1px solid gold; width: 100%;">Save & Download HTML File</button>
+        </div>
+    </div>
+
+    <!-- MAIN DYNAMIC GALLERY CONTAINER -->
+    <div class="gallery" id="galleryGrid">
+        <!-- Images loaded dynamically via Javascript -->
     </div>
 </section>
 
@@ -455,6 +552,105 @@ footer {
 
 <script>
 
+/* DEFAULT IMAGES */
+const defaultImages = [
+    "https://images.unsplash.com/photo-1519741497674-611481863552",
+    "https://images.unsplash.com/photo-1520854221256-17451cc331bf",
+    "https://images.unsplash.com/photo-1505238680356-667803448bb6",
+    "https://images.unsplash.com/photo-1469371670807-013ccf25f16a"
+];
+
+/* LOAD STATE */
+let galleryImages = JSON.parse(localStorage.getItem('sbz_gallery_images')) || defaultImages;
+let adminModeActive = false;
+
+const galleryGrid = document.getElementById('galleryGrid');
+const adminPanel = document.getElementById('adminPanel');
+
+/* RENDER GALLERY */
+function renderGallery() {
+    galleryGrid.innerHTML = '';
+    galleryImages.forEach((src, index) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        
+        item.innerHTML = `
+            <img src="${src}" alt="SBZ Wedding Setup Work">
+            <button class="delete-btn" style="display: ${adminModeActive ? 'block' : 'none'}" onclick="deleteImage(${index})">Delete</button>
+        `;
+        galleryGrid.appendChild(item);
+    });
+}
+
+/* TOGGLE ADMIN CONSOLE VISIBILITY */
+function toggleAdminMode() {
+    adminModeActive = !adminModeActive;
+    adminPanel.style.display = adminModeActive ? 'block' : 'none';
+    renderGallery();
+}
+
+/* LISTEN FOR SHORTCUT (Ctrl + M) */
+window.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        toggleAdminMode();
+    }
+});
+
+/* ADD NEW IMAGE FUNCTION */
+document.getElementById('addImgBtn').addEventListener('click', function() {
+    const fileInput = document.getElementById('imageUpload');
+    const urlInput = document.getElementById('imageUrlInput');
+
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            galleryImages.push(e.target.result);
+            saveAndRefresh();
+            fileInput.value = '';
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    } else if (urlInput.value.trim() !== '') {
+        galleryImages.push(urlInput.value.trim());
+        saveAndRefresh();
+        urlInput.value = '';
+    } else {
+        alert('Please choose a file or insert an image link url.');
+    }
+});
+
+/* DELETE FUNCTION */
+function deleteImage(index) {
+    if(confirm("Are you sure you want to remove this photo?")) {
+        galleryImages.splice(index, 1);
+        saveAndRefresh();
+    }
+}
+
+function saveAndRefresh() {
+    localStorage.setItem('sbz_gallery_images', JSON.stringify(galleryImages));
+    renderGallery();
+}
+
+/* DOWNLOAD DYNAMIC FILE PERMANENTLY */
+document.getElementById('exportCodeBtn').addEventListener('click', function() {
+    let dynamicImgTags = '';
+    galleryImages.forEach(src => {
+        dynamicImgTags += `\n\t\t<div class="gallery-item">\n\t\t\t<img src="${src}" alt="SBZ Wedding Setup Work">\n\t\t\t<button class="delete-btn" onclick="deleteImage(this)">Delete</button>\n\t\t</div>`;
+    });
+
+    let currentHtml = document.documentElement.outerHTML;
+    
+    const blob = new Blob([currentHtml], { type: 'text/html' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'index.html';
+    link.click();
+});
+
+// Init on run
+renderGallery();
+
 /* CARD SCROLL ANIMATION */
 const cards = document.querySelectorAll('.card');
 
@@ -475,20 +671,17 @@ window.addEventListener('scroll', checkCards);
 document.getElementById('quoteForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    // Get form elements
     const name = document.getElementById('name').value;
     const eventType = document.getElementById('event_type').value;
     const budget = document.getElementById('budget').value || "Not specified";
     const details = document.getElementById('details').value;
     
-    // Construct the WhatsApp text string
     const whatsappMessage = `Hello SBZ Décor, I would like to request a quote!%0A%0A` + 
                             `*Name:* ${encodeURIComponent(name)}%0A` +
                             `*Event Type:* ${encodeURIComponent(eventType)}%0A` +
                             `*Budget:* ${encodeURIComponent(budget)}%0A` +
                             `*Details:* ${encodeURIComponent(details)}`;
     
-    // Open WhatsApp link targeting your designated WhatsApp number
     window.open(`https://wa.me/18765015512?text=${whatsappMessage}`, '_blank');
 });
 
