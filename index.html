@@ -488,7 +488,11 @@ footer {
     </div>
 
     <div class="gallery" id="galleryGrid">
-        </div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1519741497674-611481863552" alt="SBZ Wedding Setup Work"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf" alt="SBZ Wedding Setup Work"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1505238680356-667803448bb6" alt="SBZ Wedding Setup Work"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a" alt="SBZ Wedding Setup Work"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
+    </div>
 </section>
 
 <section id="quote">
@@ -548,42 +552,16 @@ footer {
 
 <script>
 
-/* DEFAULT IMAGES */
-const defaultImages = [
-    "https://images.unsplash.com/photo-1519741497674-611481863552",
-    "https://images.unsplash.com/photo-1520854221256-17451cc331bf",
-    "https://images.unsplash.com/photo-1505238680356-667803448bb6",
-    "https://images.unsplash.com/photo-1469371670807-013ccf25f16a"
-];
-
-/* LOAD STATE */
-let galleryImages = JSON.parse(localStorage.getItem('sbz_gallery_images')) || defaultImages;
 let adminModeActive = false;
-
-const galleryGrid = document.getElementById('galleryGrid');
 const adminPanel = document.getElementById('adminPanel');
-
-/* RENDER GALLERY */
-function renderGallery() {
-    galleryGrid.innerHTML = '';
-    galleryImages.forEach((src, index) => {
-        const item = document.createElement('div');
-        item.className = 'gallery-item';
-        
-        item.innerHTML = `
-            <img src="${src}" alt="SBZ Wedding Setup Work">
-            <button class="delete-btn" style="display: ${adminModeActive ? 'block' : 'none'}" onclick="deleteImage(${index})">Delete</button>
-        `;
-        galleryGrid.appendChild(item);
-    });
-}
+const galleryGrid = document.getElementById('galleryGrid');
 
 /* TOGGLE ADMIN CONSOLE VISIBILITY (PASSWORD PROTECTED) */
 function toggleAdminMode() {
     if (adminModeActive) {
         adminModeActive = false;
         adminPanel.style.display = 'none';
-        renderGallery();
+        toggleDeleteButtons(false);
         return;
     }
 
@@ -592,10 +570,17 @@ function toggleAdminMode() {
     if (accessPassword === "SBZ2026") {
         adminModeActive = true;
         adminPanel.style.display = 'block';
-        renderGallery();
+        toggleDeleteButtons(true);
     } else if (accessPassword !== null) {
         alert("Incorrect password. Management access denied.");
     }
+}
+
+function toggleDeleteButtons(show) {
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    deleteButtons.forEach(btn => {
+        btn.style.display = show ? 'block' : 'none';
+    });
 }
 
 /* LISTEN FOR SHORTCUT (Ctrl + M) */
@@ -606,7 +591,7 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-/* FAILSAFE IMAGE LOADER */
+/* DIRECT DOM ADDITION UPLOADER */
 document.getElementById('addImgBtn').addEventListener('click', function() {
     const fileInput = document.getElementById('imageUpload');
     const urlInput = document.getElementById('imageUrlInput');
@@ -616,56 +601,57 @@ document.getElementById('addImgBtn').addEventListener('click', function() {
         const reader = new FileReader();
         
         reader.onload = function(e) {
-            try {
-                galleryImages.push(e.target.result);
-                saveAndRefresh();
-                fileInput.value = '';
-                alert("Photo successfully added to the gallery layout below!");
-            } catch (error) {
-                alert("Browser memory full. Please compress your file size down, or use 'Save & Download HTML File' to permanently clear the temporary browser cache memory buffer.");
-            }
+            createNewGalleryItem(e.target.result);
+            fileInput.value = '';
         };
         reader.readAsDataURL(file);
 
     } else if (urlInput.value.trim() !== '') {
-        galleryImages.push(urlInput.value.trim());
-        saveAndRefresh();
+        createNewGalleryItem(urlInput.value.trim());
         urlInput.value = '';
-        alert("Photo link successfully added!");
     } else {
         alert('Please choose a file or insert an image link URL.');
     }
 });
 
+function createNewGalleryItem(srcValue) {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.innerHTML = `
+        <img src="${srcValue}" alt="SBZ Wedding Setup Work">
+        <button class="delete-btn" style="display: block" onclick="deleteImage(this)">Delete</button>
+    `;
+    galleryGrid.appendChild(item);
+    alert("Photo added successfully onto the page! Make sure to click 'Save & Download HTML File' to update your permanent file layout.");
+}
+
 /* DELETE FUNCTION */
-function deleteImage(index) {
+function deleteImage(buttonElement) {
     if(confirm("Are you sure you want to remove this photo?")) {
-        galleryImages.splice(index, 1);
-        saveAndRefresh();
+        buttonElement.parentElement.remove();
     }
 }
 
-function saveAndRefresh() {
-    try {
-        localStorage.setItem('sbz_gallery_images', JSON.stringify(galleryImages));
-    } catch(e) {
-        console.log("LocalStorage threshold crossed; rendering cleanly instead.");
-    }
-    renderGallery();
-}
-
-/* DOWNLOAD DYNAMIC FILE PERMANENTLY */
+/* DOWNLOAD COMPRESSED HARD-CODED STRUCTURAL HTML FILE */
 document.getElementById('exportCodeBtn').addEventListener('click', function() {
+    // Temporarily turn off edit display values cleanly before packaging 
+    adminPanel.style.display = 'none';
+    toggleDeleteButtons(false);
+    
     let currentHtml = document.documentElement.outerHTML;
+    
+    // Restore layout state 
+    if(adminModeActive) {
+        adminPanel.style.display = 'block';
+        toggleDeleteButtons(true);
+    }
+
     const blob = new Blob([currentHtml], { type: 'text/html' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'index.html';
     link.click();
 });
-
-// Init on run
-renderGallery();
 
 /* CARD SCROLL ANIMATION */
 const cards = document.querySelectorAll('.card');
