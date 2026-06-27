@@ -474,7 +474,7 @@ footer {
         <h3>Gallery Control Panel</h3>
         <div class="admin-controls">
             <div class="admin-input-group">
-                <label>Option 1: Upload an image file from your device</label>
+                <label>Option 1: Upload an image file from your device (Auto-compressed)</label>
                 <input type="file" id="imageUpload" accept="image/*">
             </div>
             <p style="margin: 5px 0; color: gold;">— OR —</p>
@@ -606,19 +606,59 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-/* ADD NEW IMAGE FUNCTION */
+/* AUTOMATIC IMAGE COMPRESSION HANDLER */
 document.getElementById('addImgBtn').addEventListener('click', function() {
     const fileInput = document.getElementById('imageUpload');
     const urlInput = document.getElementById('imageUrlInput');
 
     if (fileInput.files && fileInput.files) {
+        const file = fileInput.files;
         const reader = new FileReader();
-        reader.onload = function(e) {
-            galleryImages.push(e.target.result);
-            saveAndRefresh();
-            fileInput.value = '';
+        
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                // Initialize clean hidden canvas processor 
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                // Max layout bounds
+                const MAX_WIDTH = 1000;
+                const MAX_HEIGHT = 1000;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Compress file to high performance JPEG string (Quality level: 0.7)
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                
+                try {
+                    galleryImages.push(compressedDataUrl);
+                    saveAndRefresh();
+                    fileInput.value = '';
+                } catch (error) {
+                    alert("Storage space full! Try deleting older photos first before adding more.");
+                }
+            };
+            img.src = event.target.result;
         };
-        reader.readAsDataURL(fileInput.files);
+        reader.readAsDataURL(file);
+
     } else if (urlInput.value.trim() !== '') {
         galleryImages.push(urlInput.value.trim());
         saveAndRefresh();
@@ -637,19 +677,17 @@ function deleteImage(index) {
 }
 
 function saveAndRefresh() {
-    localStorage.setItem('sbz_gallery_images', JSON.stringify(galleryImages));
-    renderGallery();
+    try {
+        localStorage.setItem('sbz_gallery_images', JSON.stringify(galleryImages));
+        renderGallery();
+    } catch(e) {
+        alert("Could not save changes. The image library size is too heavy for Local Storage.");
+    }
 }
 
 /* DOWNLOAD DYNAMIC FILE PERMANENTLY */
 document.getElementById('exportCodeBtn').addEventListener('click', function() {
-    let dynamicImgTags = '';
-    galleryImages.forEach(src => {
-        dynamicImgTags += `\n\t\t<div class="gallery-item">\n\t\t\t<img src="${src}" alt="SBZ Wedding Setup Work">\n\t\t\t<button class="delete-btn" onclick="deleteImage(this)">Delete</button>\n\t\t</div>`;
-    });
-
     let currentHtml = document.documentElement.outerHTML;
-    
     const blob = new Blob([currentHtml], { type: 'text/html' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -698,3 +736,5 @@ document.getElementById('quoteForm').addEventListener('submit', function(e) {
 
 </body>
 </html>
+
+```
