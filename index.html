@@ -74,31 +74,41 @@ nav a:hover {
     color: gold;
 }
 
-/* HERO */
+/* HERO SECTION FIXED */
 .hero {
-    height: 85vh;
-    background: url('WhatsApp Image 2026-06-27 at 5.03.27 PM (1).jpeg') center/cover no-repeat;
+    min-height: 80vh;
+    background: url('WhatsApp Image 2026-06-27 at 5.03.27 PM (1).jpeg') center top / cover no-repeat;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 40px 20px;
+    box-sizing: border-box;
 }
 
 .hero-text {
     text-align: center;
-    background: rgba(0, 0, 0, 0.65);
-    padding: 20px 40px 35px 40px; /* Reduced top padding from 40px to 20px */
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px 35px 30px 35px; /* Tighter inner layout */
     border-radius: 10px;
     backdrop-filter: blur(5px);
-    max-width: 90%;
+    max-width: 650px;
+    width: 100%;
     box-sizing: border-box;
 }
 
 .hero h2 {
     font-size: 3rem;
     color: gold;
-    margin-top: 5px; /* Tighter spacing at the top */
-    margin-bottom: 10px;
+    margin: 0 0 10px 0; /* Forced default browser margin to 0 */
+    padding: 0;
     line-height: 1.2;
+    font-family: 'Playfair Display', serif;
+}
+
+.hero p {
+    margin: 0 0 15px 0;
+    color: #eee;
+    font-size: 1.1rem;
 }
 
 /* BUTTONS */
@@ -107,7 +117,6 @@ nav a:hover {
     color: black;
     padding: 12px 25px;
     display: inline-block;
-    margin-top: 20px;
     text-decoration: none;
     border-radius: 5px;
     font-weight: bold;
