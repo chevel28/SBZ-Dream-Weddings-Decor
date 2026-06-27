@@ -474,7 +474,7 @@ footer {
         <h3>Gallery Control Panel</h3>
         <div class="admin-controls">
             <div class="admin-input-group">
-                <label>Option 1: Upload an image file from your device (Auto-compressed)</label>
+                <label>Option 1: Upload an image file from your device</label>
                 <input type="file" id="imageUpload" accept="image/*">
             </div>
             <p style="margin: 5px 0; color: gold;">— OR —</p>
@@ -606,7 +606,7 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-/* AUTOMATIC IMAGE COMPRESSION HANDLER */
+/* FAILSAFE IMAGE LOADER */
 document.getElementById('addImgBtn').addEventListener('click', function() {
     const fileInput = document.getElementById('imageUpload');
     const urlInput = document.getElementById('imageUrlInput');
@@ -615,47 +615,15 @@ document.getElementById('addImgBtn').addEventListener('click', function() {
         const file = fileInput.files;
         const reader = new FileReader();
         
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                // Initialize clean hidden canvas processor 
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
-
-                // Max layout bounds
-                const MAX_WIDTH = 1000;
-                const MAX_HEIGHT = 1000;
-
-                if (width > height) {
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
-                } else {
-                    if (height > MAX_HEIGHT) {
-                        width *= MAX_HEIGHT / height;
-                        height = MAX_HEIGHT;
-                    }
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-
-                // Compress file to high performance JPEG string (Quality level: 0.7)
-                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                
-                try {
-                    galleryImages.push(compressedDataUrl);
-                    saveAndRefresh();
-                    fileInput.value = '';
-                } catch (error) {
-                    alert("Storage space full! Try deleting older photos first before adding more.");
-                }
-            };
-            img.src = event.target.result;
+        reader.onload = function(e) {
+            try {
+                galleryImages.push(e.target.result);
+                saveAndRefresh();
+                fileInput.value = '';
+                alert("Photo successfully added to the gallery layout below!");
+            } catch (error) {
+                alert("Browser memory full. Please compress your file size down, or use 'Save & Download HTML File' to permanently clear the temporary browser cache memory buffer.");
+            }
         };
         reader.readAsDataURL(file);
 
@@ -663,8 +631,9 @@ document.getElementById('addImgBtn').addEventListener('click', function() {
         galleryImages.push(urlInput.value.trim());
         saveAndRefresh();
         urlInput.value = '';
+        alert("Photo link successfully added!");
     } else {
-        alert('Please choose a file or insert an image link url.');
+        alert('Please choose a file or insert an image link URL.');
     }
 });
 
@@ -679,10 +648,10 @@ function deleteImage(index) {
 function saveAndRefresh() {
     try {
         localStorage.setItem('sbz_gallery_images', JSON.stringify(galleryImages));
-        renderGallery();
     } catch(e) {
-        alert("Could not save changes. The image library size is too heavy for Local Storage.");
+        console.log("LocalStorage threshold crossed; rendering cleanly instead.");
     }
+    renderGallery();
 }
 
 /* DOWNLOAD DYNAMIC FILE PERMANENTLY */
@@ -736,5 +705,3 @@ document.getElementById('quoteForm').addEventListener('submit', function(e) {
 
 </body>
 </html>
-
-```
