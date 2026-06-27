@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght=500;700&family=Poppins:wght=300;500;600&display=swap" rel="stylesheet">
 
 <style>
-
 /* GLOBAL */
 body {
     margin: 0;
@@ -31,7 +30,6 @@ nav {
     border-bottom: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-/* LOGO SECTION */
 .logo {
     display: flex;
     align-items: center;
@@ -53,7 +51,6 @@ nav {
     font-weight: 700;
 }
 
-/* NAV LINKS */
 nav ul {
     list-style: none;
     display: flex;
@@ -147,7 +144,7 @@ h2 {
     margin-right: auto;
 }
 
-/* ABOUT US SECTION */
+/* ABOUT */
 .about-container {
     max-width: 800px;
     margin: 0 auto;
@@ -157,7 +154,7 @@ h2 {
     color: #ddd;
 }
 
-/* SERVICES & PRICING GRID */
+/* GRID & CARDS */
 .grid {
     display: flex;
     flex-wrap: wrap;
@@ -167,7 +164,6 @@ h2 {
     margin: 0 auto;
 }
 
-/* CARD style used for services and pricing */
 .card {
     border: 1px solid gold;
     padding: 30px 20px;
@@ -198,7 +194,7 @@ section:nth-of-type(even) .card {
     margin: 8px 0;
 }
 
-/* GALLERY WITH EDIT BUTTONS */
+/* GALLERY */
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
@@ -243,7 +239,7 @@ section:nth-of-type(even) .card {
     background: red;
 }
 
-/* ADMIN PANEL STYLING */
+/* ADMIN PANEL */
 .admin-panel {
     display: none;
     max-width: 600px;
@@ -280,7 +276,6 @@ section:nth-of-type(even) .card {
     margin-bottom: 5px;
 }
 
-.admin-panel input[type="file"],
 .admin-panel input[type="text"] {
     width: 100%;
     padding: 10px;
@@ -291,7 +286,7 @@ section:nth-of-type(even) .card {
     box-sizing: border-box;
 }
 
-/* REQUEST QUOTE FORM */
+/* QUOTE FORM */
 .quote-container {
     max-width: 600px;
     margin: 0 auto;
@@ -334,7 +329,6 @@ section:nth-of-type(even) .card {
     outline: none;
 }
 
-/* CONTACT LINKS */
 .contact-link {
     color: white;
     text-decoration: none;
@@ -348,7 +342,6 @@ section:nth-of-type(even) .card {
     color: gold;
 }
 
-/* FOOTER */
 footer {
     text-align: center;
     padding: 40px 20px;
@@ -356,10 +349,8 @@ footer {
     background: black;
     border-top: 1px solid rgba(255, 215, 0, 0.2);
 }
-
 </style>
 </head>
-
 <body>
 
 <nav>
@@ -367,7 +358,6 @@ footer {
         <img src="WhatsApp Image 2026-06-20 at 3.15.44 PM (1).jpeg" alt="SBZ Dream Weddings & Décor Logo">
         <span>SBZ Dream Weddings & Décor</span>
     </div>
-
     <ul>
         <li><a href="#">Home</a></li>
         <li><a href="#about">About Us</a></li>
@@ -422,7 +412,6 @@ footer {
 <section id="pricing">
     <h2>Our Pricing Guide</h2>
     <div class="section-subtitle">Estimated Investment Guide for Your Event Layouts</div>
-
     <div class="grid">
         <div class="card">
             <h3>Packages</h3>
@@ -430,7 +419,6 @@ footer {
             <p>Standard: 45k – 80k</p>
             <p>Premium: 85k – 200k+</p>
         </div>
-
         <div class="card">
             <h3>Décor & Styling</h3>
             <p>Backdrop: 20k – 60k</p>
@@ -438,21 +426,18 @@ footer {
             <p>Stage: 50k – 200k</p>
             <p>Lighting: 30k – 300k</p>
         </div>
-
         <div class="card">
             <h3>Wedding Reception</h3>
             <p>Small: 250k – 800k</p>
             <p>Medium: 800k – 2M+</p>
             <p>Luxury: 2M – 5M+</p>
         </div>
-
         <div class="card">
             <h3>Birthdays</h3>
             <p>Small: 20k – 50k</p>
             <p>Medium: 50k – 100k</p>
             <p>Luxury: 100k – 300k</p>
         </div>
-
         <div class="card">
             <h3>Corporate Events</h3>
             <p>Small: 50k – 150k</p>
@@ -474,24 +459,20 @@ footer {
         <h3>Gallery Control Panel</h3>
         <div class="admin-controls">
             <div class="admin-input-group">
-                <label>Option 1: Upload directly from your computer or phone</label>
-                <input type="file" id="imageUpload" accept="image/*">
+                <label>Paste Image File Name or Web URL Link:</label>
+                <input type="text" id="imageUrlInput" placeholder="e.g., photo1.jpeg or https://example.com/img.jpg">
             </div>
-            <p style="margin: 5px 0; color: gold;">— OR —</p>
-            <div class="admin-input-group">
-                <label>Option 2: Paste an Image Web Link URL</label>
-                <input type="text" id="imageUrlInput" placeholder="https://example.com/image.jpg">
-            </div>
-            <button id="addImgBtn" class="btn" style="margin-top: 10px; width: 100%;">Add Photo to Gallery</button>
-            <button id="exportCodeBtn" class="btn" style="background: #222; color: gold; border: 1px solid gold; width: 100%;">Save & Download HTML File</button>
+            <button id="addImgBtn" class="btn" style="margin-top: 10px; width: 100%;">Add Photo to Layout</button>
+            <button id="exportCodeBtn" class="btn" style="background: #222; color: gold; border: 1px solid gold; width: 100%;">Save & Download Updated HTML File</button>
         </div>
     </div>
 
+    <!-- PHOTOS ARE EMBEDDED DIRECTLY HERE -->
     <div class="gallery" id="galleryGrid">
-        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1519741497674-611481863552" alt="SBZ Wedding Setup Work"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
-        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf" alt="SBZ Wedding Setup Work"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
-        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1505238680356-667803448bb6" alt="SBZ Wedding Setup Work"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
-        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a" alt="SBZ Wedding Setup Work"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1519741497674-611481863552" alt="SBZ Setup"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf" alt="SBZ Setup"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1505238680356-667803448bb6" alt="SBZ Setup"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a" alt="SBZ Setup"><button class="delete-btn" onclick="deleteImage(this)">Delete</button></div>
     </div>
 </section>
 
@@ -531,14 +512,8 @@ footer {
 <section id="contact">
     <h2>Contact Us</h2>
     <div class="section-subtitle">Get in Touch Directly for Immediate Bookings</div>
-    <p>
-        📞 Straight Call: 
-        <a href="tel:18765383795" class="contact-link">1 (876) 538-3795</a>
-    </p>
-    <p>
-        💬 WhatsApp: 
-        <a href="https://wa.me/18765015512" target="_blank" class="contact-link">1 (876) 501-5512</a>
-    </p>
+    <p>📞 Straight Call: <a href="tel:18765383795" class="contact-link">1 (876) 538-3795</a></p>
+    <p>💬 WhatsApp: <a href="https://wa.me/18765015512" target="_blank" class="contact-link">1 (876) 501-5512</a></p>
     <p>📍 Jamaica</p>
     <div style="margin-top: 25px;">
         <a href="https://wa.me/18765015512" target="_blank" class="btn">Chat on WhatsApp</a>
@@ -551,15 +526,10 @@ footer {
 </footer>
 
 <script>
-
 let adminModeActive = false;
 const adminPanel = document.getElementById('adminPanel');
 const galleryGrid = document.getElementById('galleryGrid');
 
-// Public fallback token to process immediate global image parsing
-const IMGUR_CLIENT_ID = "48be9893952ba5c"; 
-
-/* TOGGLE ADMIN CONSOLE VISIBILITY */
 function toggleAdminMode() {
     if (adminModeActive) {
         adminModeActive = false;
@@ -567,15 +537,13 @@ function toggleAdminMode() {
         toggleDeleteButtons(false);
         return;
     }
-
     const accessPassword = prompt("Enter Administration Password to edit gallery:");
-    
     if (accessPassword === "SBZ2026") {
         adminModeActive = true;
         adminPanel.style.display = 'block';
         toggleDeleteButtons(true);
     } else if (accessPassword !== null) {
-        alert("Incorrect password. Management access denied.");
+        alert("Incorrect password. Access denied.");
     }
 }
 
@@ -586,92 +554,36 @@ function toggleDeleteButtons(show) {
     });
 }
 
-/* LISTEN FOR SHORTCUT (Ctrl + M) */
-window.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.key.toLowerCase() === 'm') {
-        e.preventDefault();
-        toggleAdminMode();
-    }
-});
-
-/* ASYNC CLOUD UPLOADER */
 document.getElementById('addImgBtn').addEventListener('click', function() {
-    const fileInput = document.getElementById('imageUpload');
     const urlInput = document.getElementById('imageUrlInput');
-    const addBtn = document.getElementById('addImgBtn');
-
-    if (fileInput.files && fileInput.files) {
-        const file = fileInput.files;
-        
-        addBtn.innerText = "Uploading to Cloud Storage... Please Wait";
-        addBtn.disabled = true;
-
-        const formData = new FormData();
-        formData.append('image', file);
-
-        fetch('https://api.imgur.com/3/image', {
-            method: 'POST',
-            headers: {
-                Authorization: 'Client-ID ' + IMGUR_CLIENT_ID
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                createNewGalleryItem(result.data.link);
-                fileInput.value = '';
-            } else {
-                alert("Cloud upload failed. Please try a smaller image file or check connection.");
-            }
-        })
-        .catch(err => {
-            alert("Error sending image to server connection channel.");
-            console.error(err);
-        })
-        .finally(() => {
-            addBtn.innerText = "Add Photo to Gallery";
-            addBtn.disabled = false;
-        });
-
-    } else if (urlInput.value.trim() !== '') {
-        createNewGalleryItem(urlInput.value.trim());
+    if (urlInput.value.trim() !== '') {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.innerHTML = `
+            <img src="${urlInput.value.trim()}" alt="SBZ Setup Work">
+            <button class="delete-btn" style="display: block" onclick="deleteImage(this)">Delete</button>
+        `;
+        galleryGrid.appendChild(item);
         urlInput.value = '';
     } else {
-        alert('Please select an image file first.');
+        alert('Please enter a file name or a web link.');
     }
 });
 
-function createNewGalleryItem(srcValue) {
-    const item = document.createElement('div');
-    item.className = 'gallery-item';
-    item.innerHTML = `
-        <img src="${srcValue}" alt="SBZ Wedding Setup Work">
-        <button class="delete-btn" style="display: block" onclick="deleteImage(this)">Delete</button>
-    `;
-    galleryGrid.appendChild(item);
-    alert("Image successfully added! Ready to download your backup.");
-}
-
-/* DELETE FUNCTION */
 function deleteImage(buttonElement) {
-    if(confirm("Are you sure you want to remove this photo?")) {
+    if(confirm("Remove this photo from the layout?")) {
         buttonElement.parentElement.remove();
     }
 }
 
-/* DOWNLOAD DYNAMIC HTML ARCHITECTURE BACKUP */
 document.getElementById('exportCodeBtn').addEventListener('click', function() {
     adminPanel.style.display = 'none';
     toggleDeleteButtons(false);
-    
     let currentHtml = "<!DOCTYPE html>\n<html lang=\"en\">\n" + document.documentElement.innerHTML + "\n</html>";
-    
     if(adminModeActive) {
         adminPanel.style.display = 'block';
         toggleDeleteButtons(true);
     }
-
     const blob = new Blob([currentHtml], { type: 'text/html' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -679,9 +591,7 @@ document.getElementById('exportCodeBtn').addEventListener('click', function() {
     link.click();
 });
 
-/* CARD SCROLL ANIMATION */
 const cards = document.querySelectorAll('.card');
-
 function checkCards() {
     cards.forEach(card => {
         const position = card.getBoundingClientRect().top;
@@ -691,29 +601,18 @@ function checkCards() {
         }
     });
 }
-
 window.addEventListener('DOMContentLoaded', checkCards);
 window.addEventListener('scroll', checkCards);
 
-/* AUTOMATIC WHATSAPP QUOTE FORM HANDLER */
 document.getElementById('quoteForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    
     const name = document.getElementById('name').value;
     const eventType = document.getElementById('event_type').value;
     const budget = document.getElementById('budget').value || "Not specified";
     const details = document.getElementById('details').value;
-    
-    const whatsappMessage = `Hello SBZ Décor, I would like to request a quote!%0A%0A` + 
-                            `*Name:* ${encodeURIComponent(name)}%0A` +
-                            `*Event Type:* ${encodeURIComponent(eventType)}%0A` +
-                            `*Budget:* ${encodeURIComponent(budget)}%0A` +
-                            `*Details:* ${encodeURIComponent(details)}`;
-    
+    const whatsappMessage = `Hello SBZ Décor, I would like to request a quote!%0A%0A*Name:* ${encodeURIComponent(name)}%0A*Event Type:* ${encodeURIComponent(eventType)}%0A*Budget:* ${encodeURIComponent(budget)}%0A*Details:* ${encodeURIComponent(details)}`;
     window.open(`https://wa.me/18765015512?text=${whatsappMessage}`, '_blank');
 });
-
 </script>
-
 </body>
 </html>
