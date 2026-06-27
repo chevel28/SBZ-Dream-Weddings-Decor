@@ -466,12 +466,10 @@ footer {
     <h2>Our Work Gallery</h2>
     <div class="section-subtitle">Glimpses of Captivating Ambiances and Elite Setups</div>
     
-    <!-- EASY ACCESS BUTTON FOR WEBSITE OWNER -->
     <button onclick="toggleAdminMode()" class="btn" style="margin-bottom: 30px; background: transparent; color: gold; border: 1px solid gold;">
         🛠️ Toggle Edit Mode (Upload / Delete Photos)
     </button>
     
-    <!-- ADMIN CONSOLE -->
     <div id="adminPanel" class="admin-panel">
         <h3>Gallery Control Panel</h3>
         <div class="admin-controls">
@@ -489,10 +487,8 @@ footer {
         </div>
     </div>
 
-    <!-- MAIN DYNAMIC GALLERY CONTAINER -->
     <div class="gallery" id="galleryGrid">
-        <!-- Images loaded dynamically via Javascript -->
-    </div>
+        </div>
 </section>
 
 <section id="quote">
@@ -582,11 +578,24 @@ function renderGallery() {
     });
 }
 
-/* TOGGLE ADMIN CONSOLE VISIBILITY */
+/* TOGGLE ADMIN CONSOLE VISIBILITY (PASSWORD PROTECTED) */
 function toggleAdminMode() {
-    adminModeActive = !adminModeActive;
-    adminPanel.style.display = adminModeActive ? 'block' : 'none';
-    renderGallery();
+    if (adminModeActive) {
+        adminModeActive = false;
+        adminPanel.style.display = 'none';
+        renderGallery();
+        return;
+    }
+
+    const accessPassword = prompt("Enter Administration Password to edit gallery:");
+    
+    if (accessPassword === "SBZ2026") {
+        adminModeActive = true;
+        adminPanel.style.display = 'block';
+        renderGallery();
+    } else if (accessPassword !== null) {
+        alert("Incorrect password. Management access denied.");
+    }
 }
 
 /* LISTEN FOR SHORTCUT (Ctrl + M) */
@@ -602,14 +611,14 @@ document.getElementById('addImgBtn').addEventListener('click', function() {
     const fileInput = document.getElementById('imageUpload');
     const urlInput = document.getElementById('imageUrlInput');
 
-    if (fileInput.files && fileInput.files[0]) {
+    if (fileInput.files && fileInput.files) {
         const reader = new FileReader();
         reader.onload = function(e) {
             galleryImages.push(e.target.result);
             saveAndRefresh();
             fileInput.value = '';
         };
-        reader.readAsDataURL(fileInput.files[0]);
+        reader.readAsDataURL(fileInput.files);
     } else if (urlInput.value.trim() !== '') {
         galleryImages.push(urlInput.value.trim());
         saveAndRefresh();
