@@ -474,7 +474,7 @@ footer {
         <h3>Gallery Control Panel</h3>
         <div class="admin-controls">
             <div class="admin-input-group">
-                <label>Option 1: Upload an image file from your device</label>
+                <label>Option 1: Upload directly from your computer or phone</label>
                 <input type="file" id="imageUpload" accept="image/*">
             </div>
             <p style="margin: 5px 0; color: gold;">— OR —</p>
@@ -556,7 +556,10 @@ let adminModeActive = false;
 const adminPanel = document.getElementById('adminPanel');
 const galleryGrid = document.getElementById('galleryGrid');
 
-/* TOGGLE ADMIN CONSOLE VISIBILITY (PASSWORD PROTECTED) */
+// Public fallback token to process immediate global image parsing
+const IMGUR_CLIENT_ID = "48be9893952ba5c"; 
+
+/* TOGGLE ADMIN CONSOLE VISIBILITY */
 function toggleAdminMode() {
     if (adminModeActive) {
         adminModeActive = false;
@@ -591,26 +594,51 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-/* DIRECT DOM ADDITION UPLOADER */
+/* ASYNC CLOUD UPLOADER */
 document.getElementById('addImgBtn').addEventListener('click', function() {
     const fileInput = document.getElementById('imageUpload');
     const urlInput = document.getElementById('imageUrlInput');
+    const addBtn = document.getElementById('addImgBtn');
 
     if (fileInput.files && fileInput.files) {
         const file = fileInput.files;
-        const reader = new FileReader();
         
-        reader.onload = function(e) {
-            createNewGalleryItem(e.target.result);
-            fileInput.value = '';
-        };
-        reader.readAsDataURL(file);
+        addBtn.innerText = "Uploading to Cloud Storage... Please Wait";
+        addBtn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        fetch('https://api.imgur.com/3/image', {
+            method: 'POST',
+            headers: {
+                Authorization: 'Client-ID ' + IMGUR_CLIENT_ID
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                createNewGalleryItem(result.data.link);
+                fileInput.value = '';
+            } else {
+                alert("Cloud upload failed. Please try a smaller image file or check connection.");
+            }
+        })
+        .catch(err => {
+            alert("Error sending image to server connection channel.");
+            console.error(err);
+        })
+        .finally(() => {
+            addBtn.innerText = "Add Photo to Gallery";
+            addBtn.disabled = false;
+        });
 
     } else if (urlInput.value.trim() !== '') {
         createNewGalleryItem(urlInput.value.trim());
         urlInput.value = '';
     } else {
-        alert('Please choose a file or insert an image link URL.');
+        alert('Please select an image file first.');
     }
 });
 
@@ -622,7 +650,7 @@ function createNewGalleryItem(srcValue) {
         <button class="delete-btn" style="display: block" onclick="deleteImage(this)">Delete</button>
     `;
     galleryGrid.appendChild(item);
-    alert("Photo added successfully onto the page! Make sure to click 'Save & Download HTML File' to update your permanent file layout.");
+    alert("Image successfully added! Ready to download your backup.");
 }
 
 /* DELETE FUNCTION */
@@ -632,15 +660,13 @@ function deleteImage(buttonElement) {
     }
 }
 
-/* DOWNLOAD COMPRESSED HARD-CODED STRUCTURAL HTML FILE */
+/* DOWNLOAD DYNAMIC HTML ARCHITECTURE BACKUP */
 document.getElementById('exportCodeBtn').addEventListener('click', function() {
-    // Temporarily turn off edit display values cleanly before packaging 
     adminPanel.style.display = 'none';
     toggleDeleteButtons(false);
     
-    let currentHtml = document.documentElement.outerHTML;
+    let currentHtml = "<!DOCTYPE html>\n<html lang=\"en\">\n" + document.documentElement.innerHTML + "\n</html>";
     
-    // Restore layout state 
     if(adminModeActive) {
         adminPanel.style.display = 'block';
         toggleDeleteButtons(true);
